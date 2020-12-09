@@ -20,9 +20,11 @@ namespace AlzaKariera.Tests
         [Test]
         public void Test1()
         {
-            KarieraPage karieraPage = new KarieraPage(webDriver);
+            HomePage karieraPage = new HomePage(webDriver);
             karieraPage.SelectDepartment("it")
-                       .SelectSubDepartment("Quality Assurance");
+                        //.SelectSubDepartment("Quality Assurance");
+                        .SelectSubDepartment("IT Development")
+                        .CheckJobOffers();
         }
 
         [TearDown]
