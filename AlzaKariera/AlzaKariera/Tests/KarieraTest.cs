@@ -1,7 +1,9 @@
-﻿using NUnit.Framework;
+﻿using AlzaKariera.Classes;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.Collections.Generic;
 
 namespace AlzaKariera.Tests
 {
@@ -20,17 +22,24 @@ namespace AlzaKariera.Tests
         [Test]
         public void Test1()
         {
-            HomePage karieraPage = new HomePage(webDriver);
-            karieraPage.SelectDepartment("it")
-                        //.SelectSubDepartment("Quality Assurance");
-                        .SelectSubDepartment("IT Development")
-                        .CheckJobOffers();
+            HomePage homePage = new HomePage(webDriver);
+
+            DepartmentPage departmentPage = homePage.SelectDepartment("it")
+                                                    .SelectSubDepartment("IT Development");
+            Dictionary<string, Offer> offers = departmentPage.GetJobOffers();
+
+            foreach (KeyValuePair<string, Offer> offer in offers)
+            {
+                departmentPage = departmentPage.SelectOfferDetail(offer.Value)
+                                               .CheckOffer(offer.Value)
+                                               .Back();
+            }
         }
 
         [TearDown]
         public void TearDown()
         {
-            //webDriver.Quit();
+            webDriver.Quit();
         }
     }
 }

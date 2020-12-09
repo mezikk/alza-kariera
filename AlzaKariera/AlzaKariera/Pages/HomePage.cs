@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using System;
 
 namespace AlzaKariera
 {
@@ -13,8 +12,7 @@ namespace AlzaKariera
 
         public HomePage SelectDepartment(string department)
         {
-            By xpath = null;
-            xpath = By.XPath("//div/input[@value='" + department + "']");
+            By xpath = By.XPath("//div/input[@value='" + department + "']");
             logger.Info("Trying to find elemeent by xpath {0}", xpath);
             IWebElement input = DepartmentsList.FindElement(xpath);
             string order = input.GetAttribute("id");
@@ -29,7 +27,7 @@ namespace AlzaKariera
         public DepartmentPage SelectSubDepartment(string subDepartment)
         {
             By xpath = By.XPath(".//*[contains(text(), '" + subDepartment + "')]");
-            logger.Info("Trying to find elemeent by xpath {0}", xpath);
+            logger.Info("Trying to find element by xpath {0}", xpath);
             IWebElement lnk = OfferList.FindElement(xpath);
             lnk.Click();
             return new DepartmentPage(Driver);

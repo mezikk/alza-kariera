@@ -1,7 +1,7 @@
-﻿using OpenQA.Selenium;
+﻿using AlzaKariera.Classes;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace AlzaKariera
@@ -12,31 +12,40 @@ namespace AlzaKariera
 
         public IWebElement OfferList => Driver.FindElement(By.XPath("//job-offer-list//*[@class='container']"));
 
-        public void CheckJobOffers()
+        public Dictionary<string, Offer> GetJobOffers()
         {
             Thread.Sleep(1000);
             //new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
-            List<string> links = new List<string>();
+            Dictionary<string, Offer> offers = new Dictionary<string, Offer>();
             foreach (IWebElement offer in OfferList.FindElements(By.XPath(".//a")))
             {
-                string path = offer.GetAttribute("pathname");
-                if (!links.Contains(path))
+                string pathname = offer.GetAttribute("pathname");
+                string jobTitle = offer.FindElement(By.XPath(".//h3[@class='job-title']")).Text;
+                if (!offers.ContainsKey(pathname))
                 {
-                    links.Add(path);
-                    logger.Info("Pathname linku: {0}", path);
+                    offers.Add(pathname, new Offer(pathname, jobTitle));
+                    logger.Info("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
                 }
                 else
                     new Exception("Duplicitní link");
             }
-            foreach(string jobLink in links)
+            return offers;
+        }
+
+        public JobPage SelectOfferDetail(Offer offer)
+        {
+            By xpathJobOffer = By.XPath(".//*[@href='" + offer.Pathname + "']");
+            By xpathDepartmentTitle = By.XPath("//job-detail-header//h1[contains(text(), 'IT Development')]");
+
+            if (ElementIsDisplayed(xpathJobOffer) && ElementIsDisplayed(xpathDepartmentTitle))
             {
-                By xpath = By.XPath(".//*[@href='" + jobLink + "']");
-                logger.Info("Trying to find elemeent by xpath {0}", xpath);
-                IWebElement link = OfferList.FindElement(xpath);
+                logger.Info("Trying to find element by xpath {0}", xpathJobOffer);
+                IWebElement link = OfferList.FindElement(xpathJobOffer);
                 link.Click();
-                JobPage jobPage = new JobPage(Driver);
-                jobPage.CheckOffer(jobLink).Back();
+                return new JobPage(Driver);
             }
+            else
+                throw new Exception("Cannot find element");
         }
     }
 }
