@@ -9,15 +9,6 @@ namespace AlzaKariera.Tests
 {
     class KarieraTest : TestClass
     {
-        IWebDriver webDriver = new ChromeDriver();
-
-        [SetUp]
-        public void Setup()
-        {
-            webDriver.Navigate().GoToUrl("https://www.alza.cz/kariera");
-            webDriver.Manage().Window.Maximize();
-            webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-        }
 
         [Test]
         public void Test1()
@@ -25,22 +16,35 @@ namespace AlzaKariera.Tests
             HomePage homePage = new HomePage(webDriver);
 
             string department = "IT Development";
+            //string department = "Quality Assurance";
             DepartmentPage departmentPage = homePage.SelectDepartment("it")
                                                     .SelectSubDepartment(department);
-            Dictionary<string, Offer> jobOffers = departmentPage.GetJobOffers();
+            Dictionary<string, Offer> jobOffers = departmentPage.GetJobOffers(department);
 
             foreach (KeyValuePair<string, Offer> offer in jobOffers)
             {
-                departmentPage = departmentPage.SelectOfferDetail(offer.Value, department)
+                departmentPage = departmentPage.OpenJobOfferDetail(offer.Value, department)
                                                .CheckOffer(offer.Value)
-                                               .Back();
+                                               .BackToDepartmentPage();
             }
         }
 
-        [TearDown]
-        public void TearDown()
+        //[Test]
+        public void Test2()
         {
-            //webDriver.Quit();
+            HomePage homePage = new HomePage(webDriver);
+
+            string department = "Quality Assurance";
+            DepartmentPage departmentPage = homePage.SelectDepartment("it")
+                                                    .SelectSubDepartment(department);
+            Dictionary<string, Offer> jobOffers = departmentPage.GetJobOffers(department);
+
+            foreach (KeyValuePair<string, Offer> offer in jobOffers)
+            {
+                departmentPage = departmentPage.OpenJobOfferDetail(offer.Value, department)
+                                               .CheckOffer(offer.Value)
+                                               .BackToDepartmentPage();
+            }
         }
     }
 }

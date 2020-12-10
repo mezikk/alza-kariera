@@ -1,0 +1,8 @@
+﻿driver:
+  chrome:
+  firefox:
+  ie:
+grid:
+logs:
+  rootfolder:
+url:

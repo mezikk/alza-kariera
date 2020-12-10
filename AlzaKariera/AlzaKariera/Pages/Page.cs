@@ -82,23 +82,18 @@ namespace AlzaKariera
             {
                 logger.Info("Trying to find element by {0}", by);
                 int attempts = 0;
-                while (attempts < 1)
+                while (attempts < 4)
                 {
                     try
                     {
-                        logger.Info("1");
                         if (parentWebElement == null)
                         {
                             return new List<IWebElement>(Driver.FindElements(by));
-                            //logger.Info(webElements.Count);
                         }
                         else
                         {
                             return new List<IWebElement>(parentWebElement.FindElements(by));
-                            //webElements.AddRange(parentWebElement.FindElements(by));
-                            //logger.Info(webElements.Count);
                         }
-                        //return webElements;
                     }
                     catch (StaleElementReferenceException)
                     {
@@ -122,6 +117,12 @@ namespace AlzaKariera
                 return webElements;
             else
                 throw new NoSuchElementException();
+        }
+        
+        public void clickOn(IWebElement element)
+        {
+            logger.Info("Clicking on element '" + element.Text + "'");
+            element.Click();
         }
     }
 }

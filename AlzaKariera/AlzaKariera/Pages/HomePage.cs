@@ -10,7 +10,6 @@ namespace AlzaKariera
 
         public HomePage(IWebDriver webDriver) : base(webDriver)
         {
-            //logger.Info(this.GetType().FullName);
             DepartmentsList = GetElement(Departments);
         }
 
@@ -18,15 +17,15 @@ namespace AlzaKariera
         {
             IWebElement input = GetElement(By.XPath("//div/input[@value='" + department + "']"));
             IWebElement img = GetElement(By.XPath(".//*[@for='" + input.GetAttribute("id") + "']/img"), DepartmentsList);
-            img.Click();
+            clickOn(img);
             return this;
         }
 
         public DepartmentPage SelectSubDepartment(string subDepartment)
         {
-            IWebElement subDepartmentsElement = GetElement(SubDepartments);
-            IWebElement subDepartmetnLinkElement = GetElement(By.XPath("//*[contains(text(), '" + subDepartment + "')]"), subDepartmentsElement);
-            subDepartmetnLinkElement.Click();
+            IWebElement subDepartments = GetElement(SubDepartments);
+            IWebElement subDepartmentLink = GetElement(By.XPath(".//*[contains(text(), '" + subDepartment + "')]"), subDepartments);
+            clickOn(subDepartmentLink);
             return new DepartmentPage(Driver);
         }
     }

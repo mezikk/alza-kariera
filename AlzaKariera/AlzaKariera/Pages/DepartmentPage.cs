@@ -1,8 +1,6 @@
 ﻿using AlzaKariera.Classes;
 using OpenQA.Selenium;
-using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace AlzaKariera
 {
@@ -13,39 +11,23 @@ namespace AlzaKariera
 
         public DepartmentPage(IWebDriver driver) : base(driver)
         {
-            //logger.Info(this.GetType().FullName);
-            //JobOffers = GetElement(JobOfferContainer);
-            GetElement(By.XPath("//career-footer"));
+            JobOffers = GetElement(JobOfferContainer);
         }
 
-        public Dictionary<string, Offer> GetJobOffers()
+        public Dictionary<string, Offer> GetJobOffers(string department)
         {
+            By jobOffersTitle = By.XPath("//career-position-detail-page//job-detail-header//h1[contains(text(), '" + department + "')]");
+            GetElement(jobOffersTitle);
+
             Dictionary<string, Offer> offers = new Dictionary<string, Offer>();
 
-            //JobOffers = GetElement(JobOfferContainer);
-            //Thread.Sleep(1000);
-            List<IWebElement> offerList = GetElements(By.XPath("//job-offer-list//*[@class='container']//a"));
-            List<string> pathnameList = new List<string>();
-            logger.Info(offerList.Count);
-            //foreach (IWebElement offer in offerList)
-            //{
-                IWebElement aa = GetElement(By.XPath("//job-offer-list//*[@class='container']//a"));
-            { 
-            logger.Info("iterate");
-                string pathname = aa.GetAttribute("pathname");
-                logger.Info(pathname);
-                pathnameList.Add(pathname);
-            }
-
-            foreach (string pathname in pathnameList)
+            List<IWebElement> jobOfferList = GetElements(By.XPath(".//a"), JobOfferContainer, JobOffers);
+            foreach (IWebElement jobOffer in jobOfferList)
             {
-                //string jobTitle = GetElement(By.XPath("//job-offer-list//*[@class='container']//a[@href='" + pathname + "']//h3[@class='job-title']")).Text;
-                string jobTitle = Driver.FindElement(By.XPath("//job-offer-list//*[@class='container']//a[@href='" + pathname + "']//h3[@class='job-title']")).Text;
+                string pathname = jobOffer.GetAttribute("pathname");
+                string jobTitle = GetElement(By.XPath(".//a[@href='" + pathname + "']//h3[@class='job-title']"), JobOfferContainer, JobOffers).Text;
                 if (offers.ContainsKey(pathname))
-                {
-                    logger.Error("Duplicitní link {0} u nabídky {1} a {2}", pathname, jobTitle, offers[pathname].JobTitle);
-                    throw new Exception();
-                }
+                    logger.Warn("Duplicitní link {0} u nabídky {1} a {2}", pathname, jobTitle, offers[pathname].JobTitle);
                 else
                 {
                     logger.Info("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
@@ -55,14 +37,14 @@ namespace AlzaKariera
             return offers;
         }
 
-        public JobPage SelectOfferDetail(Offer offer, string department)
+        public JobPage OpenJobOfferDetail(Offer offer, string department)
         {
-            By xpathDepartmentTitle = By.XPath("//job-detail-header//h1[contains(text(), '" + department + "')]");
-            By xpathJobOffer = By.XPath(".//*[@href='" + offer.Pathname + "']");
+            By departmentTitle = By.XPath("//job-detail-header//h1[contains(text(), '" + department + "')]");
+            By jobOfferPath = By.XPath(".//a[@href='" + offer.Pathname + "']");
 
-            GetElement(xpathDepartmentTitle);
-            IWebElement jobOfferElement = GetElement(xpathJobOffer, JobOfferContainer, JobOffers);
-            jobOfferElement.Click();
+            GetElement(departmentTitle);
+            IWebElement jobOfferElement = GetElement(jobOfferPath, JobOfferContainer, JobOffers);
+            clickOn(jobOfferElement);
             return new JobPage(Driver);
         }
     }
