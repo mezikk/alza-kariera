@@ -4,34 +4,30 @@ namespace AlzaKariera
 {
     public class HomePage : Page
     {
-        public HomePage(IWebDriver driver) : base(driver) { }
+        readonly By Departments = By.ClassName("departments-list");
+        readonly By SubDepartments = By.XPath("//job-offer-list//*[@class='container']");
+        readonly IWebElement DepartmentsList;
 
-        public IWebElement DepartmentsList => Driver.FindElement(By.ClassName("departments-list"));
-
-        public IWebElement OfferList => Driver.FindElement(By.XPath("//job-offer-list//*[@class='container']"));
+        public HomePage(IWebDriver webDriver) : base(webDriver)
+        {
+            //logger.Info(this.GetType().FullName);
+            DepartmentsList = GetElement(Departments);
+        }
 
         public HomePage SelectDepartment(string department)
         {
-            By xpath = By.XPath("//div/input[@value='" + department + "']");
-            logger.Info("Trying to find elemeent by xpath {0}", xpath);
-            IWebElement input = DepartmentsList.FindElement(xpath);
-            string order = input.GetAttribute("id");
-
-            logger.Info("Trying to find elemeent by xpath {0}", xpath);
-            xpath = By.XPath(".//*[@for='" + order + "']/img");
-            IWebElement img = DepartmentsList.FindElement(xpath);
+            IWebElement input = GetElement(By.XPath("//div/input[@value='" + department + "']"));
+            IWebElement img = GetElement(By.XPath(".//*[@for='" + input.GetAttribute("id") + "']/img"), DepartmentsList);
             img.Click();
             return this;
         }
 
         public DepartmentPage SelectSubDepartment(string subDepartment)
         {
-            By xpath = By.XPath(".//*[contains(text(), '" + subDepartment + "')]");
-            logger.Info("Trying to find element by xpath {0}", xpath);
-            IWebElement lnk = OfferList.FindElement(xpath);
-            lnk.Click();
+            IWebElement subDepartmentsElement = GetElement(SubDepartments);
+            IWebElement subDepartmetnLinkElement = GetElement(By.XPath("//*[contains(text(), '" + subDepartment + "')]"), subDepartmentsElement);
+            subDepartmetnLinkElement.Click();
             return new DepartmentPage(Driver);
         }
-
     }
 }

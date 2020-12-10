@@ -9,43 +9,46 @@ namespace AlzaKariera
     {
         public static Dictionary<string, Person> People = new Dictionary<string, Person>();
 
-        public JobPage(IWebDriver webDriver) : base(webDriver) { }
+        readonly By JobHeader = By.XPath("//job-detail-header//h1");
+        readonly By JobPeople = By.XPath("//job-people//*[@class='card-container']");
+        readonly IWebElement PeopleElement;
+
+        public JobPage(IWebDriver webDriver) : base(webDriver)
+        {
+            //logger.Info(this.GetType().FullName);
+            GetElement(JobHeader);
+            PeopleElement = GetElement(JobPeople);
+        }
 
         public JobPage CheckOffer(Offer offer)
         {
             By xpathJobTitle = By.XPath("//job-detail-header//h1[contains(text(), '" + offer.JobTitle + "')]");
-            By xpathPeople = By.XPath("//job-people//*[@class='card-container']");
+            GetElement(xpathJobTitle);
+
             logger.Info("CheckOffer {0}", offer.Pathname);
-            if (ElementIsDisplayed(xpathJobTitle) && ElementIsDisplayed(xpathPeople))
-            {
-                IWebElement webElement = Driver.FindElement(By.XPath("//job-detail-item"));
-                if (webElement.Text.Length > 0)
-                    logger.Info("Description {0}", webElement.Text);
-                else
-                    logger.Error("Nepodařilo se najít žádný popis pozice");
-
-                webElement = Driver.FindElement(xpathPeople);
-
-                foreach (IWebElement personWebElement in webElement.FindElements(By.XPath("./div")))
-                {
-                    string name = personWebElement.FindElement(By.ClassName("subtitle")).Text;
-                    string description = personWebElement.FindElement(By.ClassName("description")).Text;
-                    string picture = personWebElement.FindElement(By.XPath(".//*[contains(@style,'background-image')]")).GetCssValue("background-image");
-                    if (People.TryGetValue(name, out Person person))
-                    {
-                        if (!person.Picture.Equals(picture))
-                            logger.Error("Osoba {0} má odlišné odkazy na fotografii {1} a {2}", name, person.Picture, picture);
-                        if (!person.Description.Equals(description))
-                            logger.Error("Osoba {0} má odlišné popisy {1} a {2}", name, person.Description, description);
-                    }
-                    else
-                        People.Add(name, new Person(name, description, picture));
-
-                }
-                return this;
-            }
+            IWebElement webElement = GetElement(By.XPath("//job-detail-item"));
+            if (webElement.Text.Length > 0)
+                logger.Info("Description {0}", webElement.Text);
             else
-                throw new Exception("Cannot find element");
+                logger.Error("Nepodařilo se najít žádný popis pozice");
+
+            foreach (IWebElement personElement in GetElements(By.XPath("./div"), JobPeople, PeopleElement))
+            {
+                string name = GetElement(By.ClassName("subtitle"), personElement).Text;
+                string description = GetElement(By.ClassName("description"), personElement).Text;
+                string picture = GetElement(By.XPath(".//*[contains(@style,'background-image')]"), personElement).GetCssValue("background-image");
+                if (People.TryGetValue(name, out Person person))
+                {
+                    if (!person.Picture.Equals(picture))
+                        logger.Error("Osoba {0} má odlišné odkazy na fotografii {1} a {2}", name, person.Picture, picture);
+                    if (!person.Description.Equals(description))
+                        logger.Error("Osoba {0} má odlišné popisy {1} a {2}", name, person.Description, description);
+                }
+                else
+                    People.Add(name, new Person(name, description, picture));
+
+            }
+            return this;
         }
 
         public JobPage GetPersonList()

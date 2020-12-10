@@ -1,23 +1,18 @@
 ﻿using NLog;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AlzaKariera.Tests
 {
-    class Test
+    class TestClass
     {
         public static Logger logger;
 
-        public Test()
+        public TestClass()
         {
             if (logger == null)
             {
+                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(@"c:\Users\mezikk\source\repos\alza-kariera\AlzaKariera\AlzaKariera\Config\nlog.config");
                 logger = LogManager.GetCurrentClassLogger();
             }
-
         }
-
     }
-
 }

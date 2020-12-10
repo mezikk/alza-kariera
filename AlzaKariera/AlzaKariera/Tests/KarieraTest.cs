@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace AlzaKariera.Tests
 {
-    class KarieraTest
+    class KarieraTest : TestClass
     {
         IWebDriver webDriver = new ChromeDriver();
 
@@ -16,7 +16,7 @@ namespace AlzaKariera.Tests
         {
             webDriver.Navigate().GoToUrl("https://www.alza.cz/kariera");
             webDriver.Manage().Window.Maximize();
-            webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
 
         [Test]
@@ -24,13 +24,14 @@ namespace AlzaKariera.Tests
         {
             HomePage homePage = new HomePage(webDriver);
 
+            string department = "IT Development";
             DepartmentPage departmentPage = homePage.SelectDepartment("it")
-                                                    .SelectSubDepartment("IT Development");
-            Dictionary<string, Offer> offers = departmentPage.GetJobOffers();
+                                                    .SelectSubDepartment(department);
+            Dictionary<string, Offer> jobOffers = departmentPage.GetJobOffers();
 
-            foreach (KeyValuePair<string, Offer> offer in offers)
+            foreach (KeyValuePair<string, Offer> offer in jobOffers)
             {
-                departmentPage = departmentPage.SelectOfferDetail(offer.Value)
+                departmentPage = departmentPage.SelectOfferDetail(offer.Value, department)
                                                .CheckOffer(offer.Value)
                                                .Back();
             }
@@ -39,7 +40,7 @@ namespace AlzaKariera.Tests
         [TearDown]
         public void TearDown()
         {
-            webDriver.Quit();
+            //webDriver.Quit();
         }
     }
 }
