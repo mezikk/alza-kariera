@@ -1,8 +1,5 @@
 ﻿using AlzaKariera.Classes;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System;
 using System.Collections.Generic;
 
 namespace AlzaKariera.Tests
@@ -13,7 +10,7 @@ namespace AlzaKariera.Tests
         [Test]
         public void Test1()
         {
-            HomePage homePage = new HomePage(webDriver);
+            HomePage homePage = new HomePage(CustomDriver);
 
             string department = "IT Development";
             //string department = "Quality Assurance";
@@ -29,10 +26,10 @@ namespace AlzaKariera.Tests
             }
         }
 
-        //[Test]
+        [Test]
         public void Test2()
         {
-            HomePage homePage = new HomePage(webDriver);
+            HomePage homePage = new HomePage(CustomDriver);
 
             string department = "Quality Assurance";
             DepartmentPage departmentPage = homePage.SelectDepartment("it")

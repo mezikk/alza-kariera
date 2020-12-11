@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AlzaKariera.Classes;
+using OpenQA.Selenium;
 
 namespace AlzaKariera
 {
@@ -8,7 +9,7 @@ namespace AlzaKariera
         readonly By SubDepartments = By.XPath("//job-offer-list//*[@class='container']");
         readonly IWebElement DepartmentsList;
 
-        public HomePage(IWebDriver webDriver) : base(webDriver)
+        public HomePage(CustomDriver customDriver) : base(customDriver)
         {
             DepartmentsList = GetElement(Departments);
         }
@@ -17,7 +18,7 @@ namespace AlzaKariera
         {
             IWebElement input = GetElement(By.XPath("//div/input[@value='" + department + "']"));
             IWebElement img = GetElement(By.XPath(".//*[@for='" + input.GetAttribute("id") + "']/img"), DepartmentsList);
-            clickOn(img);
+            ClickOn(img);
             return this;
         }
 
@@ -25,8 +26,8 @@ namespace AlzaKariera
         {
             IWebElement subDepartments = GetElement(SubDepartments);
             IWebElement subDepartmentLink = GetElement(By.XPath(".//*[contains(text(), '" + subDepartment + "')]"), subDepartments);
-            clickOn(subDepartmentLink);
-            return new DepartmentPage(Driver);
+            ClickOn(subDepartmentLink);
+            return new DepartmentPage(CustomDriver);
         }
     }
 }

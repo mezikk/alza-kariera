@@ -9,7 +9,7 @@ namespace AlzaKariera
         readonly By JobOfferContainer = By.XPath("//job-offer-list//*[@class='container']");
         IWebElement JobOffers;
 
-        public DepartmentPage(IWebDriver driver) : base(driver)
+        public DepartmentPage(CustomDriver customDriver) : base(customDriver)
         {
             JobOffers = GetElement(JobOfferContainer);
         }
@@ -27,10 +27,10 @@ namespace AlzaKariera
                 string pathname = jobOffer.GetAttribute("pathname");
                 string jobTitle = GetElement(By.XPath(".//a[@href='" + pathname + "']//h3[@class='job-title']"), JobOfferContainer, JobOffers).Text;
                 if (offers.ContainsKey(pathname))
-                    logger.Warn("Duplicitní link {0} u nabídky {1} a {2}", pathname, jobTitle, offers[pathname].JobTitle);
+                    CustomDriver.GetLogger().Warn("Duplicitní link {0} u nabídky {1} a {2}", pathname, jobTitle, offers[pathname].JobTitle);
                 else
                 {
-                    logger.Info("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
+                    CustomDriver.GetLogger().Info("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
                     offers.Add(pathname, new Offer(pathname, jobTitle));
                 }
             }
@@ -44,8 +44,8 @@ namespace AlzaKariera
 
             GetElement(departmentTitle);
             IWebElement jobOfferElement = GetElement(jobOfferPath, JobOfferContainer, JobOffers);
-            clickOn(jobOfferElement);
-            return new JobPage(Driver);
+            ClickOn(jobOfferElement);
+            return new JobPage(CustomDriver);
         }
     }
 }

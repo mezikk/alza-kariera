@@ -1,5 +1,4 @@
 ﻿using AlzaKariera.Classes;
-using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -7,24 +6,13 @@ using System.Collections.Generic;
 
 namespace AlzaKariera
 {
-    public class Page
+    public abstract class Page
     {
-        public static Logger logger;
+        protected CustomDriver CustomDriver;
 
-        public Page(IWebDriver webDriver)
+        public Page(CustomDriver customDriver)
         {
-            Driver = webDriver;
-
-            if (logger == null)
-            {
-                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(@"c:\Users\mezikk\source\repos\alza-kariera\AlzaKariera\AlzaKariera\Config\nlog.config");
-                logger = LogManager.GetCurrentClassLogger();
-            }
-        }
-
-        public IWebDriver Driver
-        {
-            get;
+            this.CustomDriver = customDriver;
         }
 
         //public IWebElement GetVisibleElement(By by)
@@ -46,41 +34,41 @@ namespace AlzaKariera
 
         public IWebElement GetElement(By by)
         {
-            return _getElements(by, null, null)[0];
+            return getElements(by, null, null)[0];
         }
 
         public IWebElement GetElement(By by, IWebElement parentWebElement)
         {
-            return _getElements(by, null, parentWebElement)[0];
+            return getElements(by, null, parentWebElement)[0];
         }
 
         public IWebElement GetElement(By by, By parent, IWebElement parentWebElement)
         {
-            return _getElements(by, parent, parentWebElement)[0];
+            return getElements(by, parent, parentWebElement)[0];
         }
 
         public List<IWebElement> GetElements(By by)
         {
-            return _getElements(by, null, null);
+            return getElements(by, null, null);
         }
 
         public List<IWebElement> GetElements(By by, IWebElement parentWebElement)
         {
-            return _getElements(by, null, parentWebElement);
+            return getElements(by, null, parentWebElement);
         }
 
         public List<IWebElement> GetElements(By by, By parent, IWebElement parentWebElement)
         {
-            return _getElements(by, parent, parentWebElement);
+            return getElements(by, parent, parentWebElement);
         }
 
-        private List<IWebElement> _getElements(By by, By parent, IWebElement parentWebElement)
+        private List<IWebElement> getElements(By by, By parent, IWebElement parentWebElement)
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            WebDriverWait wait = new WebDriverWait(CustomDriver.GetDriver(), TimeSpan.FromSeconds(10));
             List<IWebElement> webElements;
             webElements = wait.Until(conditions =>
             {
-                logger.Info("Trying to find element by {0}", by);
+                CustomDriver.GetLogger().Info("Trying to find element by {0}", by);
                 int attempts = 0;
                 while (attempts < 4)
                 {
@@ -88,7 +76,7 @@ namespace AlzaKariera
                     {
                         if (parentWebElement == null)
                         {
-                            return new List<IWebElement>(Driver.FindElements(by));
+                            return new List<IWebElement>(CustomDriver.GetDriver().FindElements(by));
                         }
                         else
                         {
@@ -97,17 +85,10 @@ namespace AlzaKariera
                     }
                     catch (StaleElementReferenceException)
                     {
-                        logger.Error("StaleElementReferenceException");
+                        CustomDriver.GetLogger().Error("StaleElementReferenceException");
                         if (!(parentWebElement == null))
-                            parentWebElement = Driver.FindElement(parent);
+                            parentWebElement = CustomDriver.GetDriver().FindElement(parent);
                     }
-                    //catch (NoSuchElementException ne)
-                    //{
-                    //    logger.Error("Cannot find element by {0}", by);
-                    //    logger.Error(ne);
-                    //    //get screenshot
-                    //    Utils.SaveScreenshotAsFile(Driver, this.GetType().Name + ".png");
-                    //}
                     attempts++;
                     
                 }
@@ -119,9 +100,9 @@ namespace AlzaKariera
                 throw new NoSuchElementException();
         }
         
-        public void clickOn(IWebElement element)
+        public void ClickOn(IWebElement element)
         {
-            logger.Info("Clicking on element '" + element.Text + "'");
+            CustomDriver.GetLogger().Info("Clicking on element '" + element.Text + "'");
             element.Click();
         }
     }

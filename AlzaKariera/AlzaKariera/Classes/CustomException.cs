@@ -6,9 +6,9 @@ namespace AlzaKariera.Classes
 {
     class CustomException : Exception
     {
-        public CustomException()
+        public CustomException(string message) : base(message)
         {
-            
+            //Utils.SaveScreenshotAsFile(Driver, this.GetType().Name + ".png");
         }
     }
 }
