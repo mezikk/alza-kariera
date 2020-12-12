@@ -8,12 +8,14 @@ namespace AlzaKariera
 {
     public abstract class Page
     {
-        protected Driver CustomDriver;
+        protected Driver Driver;
 
-        public Page(Driver customDriver)
+        public Page(Driver driver)
         {
-            this.CustomDriver = customDriver;
+            Driver = driver;
+            PageIsLoaded();
         }
+
 
         //public IWebElement GetVisibleElement(By by)
         //{
@@ -64,11 +66,11 @@ namespace AlzaKariera
 
         private List<IWebElement> getElements(By by, By parent, IWebElement parentWebElement)
         {
-            WebDriverWait wait = new WebDriverWait(CustomDriver.GetDriver(), TimeSpan.FromSeconds(10));
+            WebDriverWait wait = new WebDriverWait(Driver.GetWebDriver(), TimeSpan.FromSeconds(10));
             List<IWebElement> webElements;
             webElements = wait.Until(conditions =>
             {
-                CustomDriver.GetLogger().Info("Trying to find element by {0}", by);
+                Driver.GetLogger().Info("Trying to find element by {0}", by);
                 int attempts = 0;
                 while (attempts < 4)
                 {
@@ -76,7 +78,7 @@ namespace AlzaKariera
                     {
                         if (parentWebElement == null)
                         {
-                            return new List<IWebElement>(CustomDriver.GetDriver().FindElements(by));
+                            return new List<IWebElement>(Driver.GetWebDriver().FindElements(by));
                         }
                         else
                         {
@@ -85,25 +87,35 @@ namespace AlzaKariera
                     }
                     catch (StaleElementReferenceException)
                     {
-                        CustomDriver.GetLogger().Error("StaleElementReferenceException");
+                        Driver.GetLogger().Error("StaleElementReferenceException, opakuji hledání");
                         if (!(parentWebElement == null))
-                            parentWebElement = CustomDriver.GetDriver().FindElement(parent);
+                            parentWebElement = Driver.GetWebDriver().FindElement(parent);
                     }
                     attempts++;
-                    
+
                 }
-                throw new Exception("Doslo k chybe hledani elementu");
+                throw new CustomException(Driver, "Doslo k chybe při hledání elementu '" + by + "'");
             });
             if (webElements.Count > 0)
                 return webElements;
             else
-                throw new NoSuchElementException();
+                throw new CustomException(Driver, "Nepodařilo se nalézt element '" + by + "'");
         }
-        
+
         public void ClickOn(IWebElement element)
         {
-            CustomDriver.GetLogger().Info("Clicking on element '" + element.Text + "'");
+            Driver.GetLogger().Info("Clicking on element '" + element.Text + "'");
             element.Click();
+        }
+
+        public bool PageIsLoaded()
+        {
+            WebDriverWait wait = new WebDriverWait(Driver.GetWebDriver(), TimeSpan.FromSeconds(10));
+            wait.Until(conditions =>
+            {
+                return ((IJavaScriptExecutor)Driver.GetWebDriver()).ExecuteScript("return document.readyState").Equals("complete");
+            });
+            return false;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace AlzaKariera.Tests
         [TearDown]
         public void TearDown()
         {
-            Driver.GetDriver().Quit();
+            Driver.GetWebDriver().Quit();
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using AlzaKariera.Classes;
-using AlzaKariera.Tests;
+﻿using AlzaKariera.Tests;
 using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.Events;
 using System;
 using System.IO;
 using YamlDotNet.Serialization;
@@ -19,6 +19,7 @@ namespace AlzaKariera.Classes
         Properties Properties;
         TestClass TestClass;
         string LogDir;
+        public int PageOrder;
 
         public Driver(TestClass testClass)
         {
@@ -34,6 +35,11 @@ namespace AlzaKariera.Classes
             return Logger;
         }
 
+        public string GetLogDir()
+        {
+            return LogDir;
+        }
+
         private void LoadProperties(string propertiesFile)
         {
             var deserializer = new DeserializerBuilder().WithNamingConvention(UnderscoredNamingConvention.Instance)
@@ -41,7 +47,7 @@ namespace AlzaKariera.Classes
             Properties = deserializer.Deserialize<Properties>(File.ReadAllText(propertiesFile));
         }
 
-        public IWebDriver GetDriver()
+        public IWebDriver GetWebDriver()
         {
             return WebDriver;
         }
@@ -61,10 +67,35 @@ namespace AlzaKariera.Classes
         private void InitWebDriver()
         {
             string app = Environment.GetEnvironmentVariable("TestApplication");
-            WebDriver = GetWebDriver();
+            WebDriver = InitializeWebDriver();
             WebDriver.Navigate().GoToUrl(Properties.Apps[app].Url);
             WebDriver.Manage().Window.Maximize();
             WebDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+
+            EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(WebDriver);
+            eventFiringWebDriver.ElementClicking += EventFiringWebDriver_createScreenShot_click;
+            eventFiringWebDriver.NavigatingForward += EventFiringWebDriver_createScreenShot_forward;
+            eventFiringWebDriver.NavigatingBack += EventFiringWebDriver_createScreenShot_back;
+            WebDriver = eventFiringWebDriver;
+        }
+
+        private void EventFiringWebDriver_createScreenShot_click(object sender, WebElementEventArgs args)
+        {
+            ((IJavaScriptExecutor)args.Driver).ExecuteScript("arguments[0].style.outline='4px solid red'", args.Element);
+            string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
+            Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
+        }
+
+        private void EventFiringWebDriver_createScreenShot_forward(object sender, WebDriverNavigationEventArgs args)
+        {
+            string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
+            Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
+        }
+
+        private void EventFiringWebDriver_createScreenShot_back(object sender, WebDriverNavigationEventArgs args)
+        {
+            string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
+            Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
         }
 
         public void Quit()
@@ -72,7 +103,7 @@ namespace AlzaKariera.Classes
             WebDriver.Quit();
         }
 
-        private IWebDriver GetWebDriver()
+        private IWebDriver InitializeWebDriver()
         {
             string browser = Environment.GetEnvironmentVariable("TestBrowser");
             Uri uri = new Uri(Properties.Grid.Url);

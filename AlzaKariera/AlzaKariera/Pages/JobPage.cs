@@ -11,9 +11,9 @@ namespace AlzaKariera
 
         readonly By JobHeader = By.XPath("//job-detail-header//h1");
         readonly By JobPeople = By.XPath("//job-people//*[@class='card-container']");
-        readonly IWebElement PeopleContainer;
+        IWebElement PeopleContainer;
 
-        public JobPage(Driver customDriver) : base(customDriver)
+        public JobPage(Driver driver) : base(driver)
         {
             GetElement(JobHeader);
             PeopleContainer = GetElement(JobPeople);
@@ -24,12 +24,12 @@ namespace AlzaKariera
             By jobTitle = By.XPath("//job-detail-header//h1[contains(text(), '" + offer.JobTitle + "')]");
             GetElement(jobTitle);
 
-            CustomDriver.GetLogger().Info("CheckOffer {0}", offer.Pathname);
+            Driver.GetLogger().Info("CheckOffer {0}", offer.Pathname);
             IWebElement webElement = GetElement(By.XPath("//job-detail-item"));
             if (webElement.Text.Length > 0)
-                CustomDriver.GetLogger().Info("Description {0}", webElement.Text);
+                Driver.GetLogger().Info("Description {0}", webElement.Text);
             else
-                CustomDriver.GetLogger().Error("Nepodařilo se najít žádný popis pozice");
+                Driver.GetLogger().Error("Nepodařilo se najít žádný popis pozice");
 
             foreach (IWebElement personElement in GetElements(By.XPath("./div"), JobPeople, PeopleContainer))
             {
@@ -40,9 +40,9 @@ namespace AlzaKariera
                 if (People.TryGetValue(name, out Person person))
                 {
                     if (!person.Picture.Equals(picture))
-                        CustomDriver.GetLogger().Error("Osoba {0} má odlišné odkazy na fotografii {1} a {2}", name, person.Picture, picture);
+                        Driver.GetLogger().Error("Osoba {0} má odlišné odkazy na fotografii {1} a {2}", name, person.Picture, picture);
                     if (!person.Description.Equals(description))
-                        CustomDriver.GetLogger().Error("Osoba {0} má odlišné popisy {1} a {2}", name, person.Description, description);
+                        Driver.GetLogger().Error("Osoba {0} má odlišné popisy {1} a {2}", name, person.Description, description);
                 }
                 else {
                     Assert.IsTrue(name.Length > 0, "Name of the person '" + name + "'is not filled");
@@ -58,18 +58,18 @@ namespace AlzaKariera
         {
             foreach (KeyValuePair<string, Person> person in People)
             {
-                CustomDriver.GetLogger().Info(person.Value.Name);
-                CustomDriver.GetLogger().Info(person.Value.Description);
-                CustomDriver.GetLogger().Info(person.Value.Picture);
+                Driver.GetLogger().Info(person.Value.Name);
+                Driver.GetLogger().Info(person.Value.Description);
+                Driver.GetLogger().Info(person.Value.Picture);
             }
             return this;
         }
 
         public DepartmentPage BackToDepartmentPage()
         {
-            CustomDriver.GetLogger().Info("Getting back from detail offer page");
-            CustomDriver.GetDriver().Navigate().Back();
-            return new DepartmentPage(CustomDriver);
+            Driver.GetLogger().Info("Getting back from detail offer page");
+            Driver.GetWebDriver().Navigate().Back();
+            return new DepartmentPage(Driver);
         }
     }
 }

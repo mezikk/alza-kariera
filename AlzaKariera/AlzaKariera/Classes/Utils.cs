@@ -7,11 +7,9 @@ namespace AlzaKariera.Classes
 {
     class Utils
     {
-        public static void SaveScreenshotAsFile(IWebDriver driver, string path)
+        public static void SaveScreenshotAsFile(IWebDriver driver, string fileName)
         {
-            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile("screen.png", ScreenshotImageFormat.Png);
+            ((ITakesScreenshot)driver).GetScreenshot().SaveAsFile(fileName, ScreenshotImageFormat.Png);
         }
-
-
     }
 }
