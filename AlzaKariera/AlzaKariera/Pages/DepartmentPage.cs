@@ -9,7 +9,7 @@ namespace AlzaKariera
         readonly By JobOfferContainer = By.XPath("//job-offer-list//*[@class='container']");
         IWebElement JobOffers;
 
-        public DepartmentPage(CustomDriver customDriver) : base(customDriver)
+        public DepartmentPage(Driver customDriver) : base(customDriver)
         {
             JobOffers = GetElement(JobOfferContainer);
         }

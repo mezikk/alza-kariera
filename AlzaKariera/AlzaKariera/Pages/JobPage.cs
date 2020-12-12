@@ -13,7 +13,7 @@ namespace AlzaKariera
         readonly By JobPeople = By.XPath("//job-people//*[@class='card-container']");
         readonly IWebElement PeopleContainer;
 
-        public JobPage(CustomDriver customDriver) : base(customDriver)
+        public JobPage(Driver customDriver) : base(customDriver)
         {
             GetElement(JobHeader);
             PeopleContainer = GetElement(JobPeople);

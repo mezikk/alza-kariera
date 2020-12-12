@@ -1,4 +1,5 @@
 ﻿using AlzaKariera.Classes;
+using AlzaKariera.Tests;
 using NLog;
 using OpenQA.Selenium;
 using System;
@@ -8,15 +9,19 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace AlzaKariera.Classes
 {
-    public class CustomDriver
+    public class Driver
     {
         IWebDriver WebDriver;
         Logger Logger;
         Properties Properties;
+        TestClass TestClass;
+        string LogDir;
 
-        public CustomDriver()
+        public Driver(TestClass testClass)
         {
-            LoadConfig(@"c:\Users\mezikk\source\repos\alza-kariera\AlzaKariera\AlzaKariera\Config\properties.yaml");
+            var propertiesFile = Environment.GetEnvironmentVariable("PropertiesFile");
+            TestClass = testClass;
+            LoadProperties(propertiesFile);
             InitLogging();
             InitWebDriver();
         }
@@ -26,11 +31,11 @@ namespace AlzaKariera.Classes
             return Logger;
         }
 
-        private void LoadConfig(string configFile)
+        private void LoadProperties(string propertiesFile)
         {
             var deserializer = new DeserializerBuilder().WithNamingConvention(UnderscoredNamingConvention.Instance)
                                                         .Build();
-            Properties = deserializer.Deserialize<Properties>(File.ReadAllText(configFile));
+            Properties = deserializer.Deserialize<Properties>(File.ReadAllText(propertiesFile));
         }
 
         public IWebDriver GetDriver()
@@ -41,8 +46,11 @@ namespace AlzaKariera.Classes
         {
             if (Logger == null)
             {
+                string testFolder = TestClass.GetType().FullName.Replace(".", "/") + "/" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss");
+                LogDir = Properties.Logs.Folder + "/" + testFolder;
                 LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Properties.Logs.Config);
                 LogManager.Configuration.Variables["basedir"] = Properties.Logs.Folder;
+                LogManager.Configuration.Variables["testfolder"] = testFolder;
                 Logger = LogManager.GetCurrentClassLogger();
             }
         }

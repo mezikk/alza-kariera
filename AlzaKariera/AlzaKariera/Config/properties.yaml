@@ -8,8 +8,8 @@
 grid:
   url: 'http://localhost:4444/wd/hub'
 logs:
-  config: 'c:\Users\mezikk\source\repos\alza-kariera\AlzaKariera\AlzaKariera\Config\nlog.config'
-  folder: '.\logs'
+  config: 'Config/nlog.config'
+  folder: 'logs'
 apps:
   alza:
     url: 'https://www.alza.cz'

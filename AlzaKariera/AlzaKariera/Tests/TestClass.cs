@@ -5,22 +5,21 @@ namespace AlzaKariera.Tests
 {
     public class TestClass
     {
-        public CustomDriver CustomDriver;
+        public Driver Driver;
 
         public TestClass()
         {
         }
 
-        [SetUp]
-        public void InitDriver()
+        public void InitDriver(TestClass testClass)
         {
-            CustomDriver = new CustomDriver();
+            Driver = new Driver(testClass);
         }
 
         [TearDown]
         public void TearDown()
         {
-            CustomDriver.GetDriver().Quit();
+            Driver.GetDriver().Quit();
         }
     }
 }

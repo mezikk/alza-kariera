@@ -9,7 +9,7 @@ namespace AlzaKariera
         readonly By SubDepartments = By.XPath("//job-offer-list//*[@class='container']");
         readonly IWebElement DepartmentsList;
 
-        public HomePage(CustomDriver customDriver) : base(customDriver)
+        public HomePage(Driver customDriver) : base(customDriver)
         {
             DepartmentsList = GetElement(Departments);
         }

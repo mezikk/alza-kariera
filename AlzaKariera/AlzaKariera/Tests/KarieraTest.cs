@@ -10,7 +10,8 @@ namespace AlzaKariera.Tests
         [Test]
         public void Test1()
         {
-            HomePage homePage = new HomePage(CustomDriver);
+            InitDriver(this);
+            HomePage homePage = new HomePage(Driver);
 
             string department = "IT Development";
             //string department = "Quality Assurance";
@@ -29,7 +30,8 @@ namespace AlzaKariera.Tests
         [Test]
         public void Test2()
         {
-            HomePage homePage = new HomePage(CustomDriver);
+            InitDriver(this);
+            HomePage homePage = new HomePage(Driver);
 
             string department = "Quality Assurance";
             DepartmentPage departmentPage = homePage.SelectDepartment("it")

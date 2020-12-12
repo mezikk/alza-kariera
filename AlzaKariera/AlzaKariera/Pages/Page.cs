@@ -8,9 +8,9 @@ namespace AlzaKariera
 {
     public abstract class Page
     {
-        protected CustomDriver CustomDriver;
+        protected Driver CustomDriver;
 
-        public Page(CustomDriver customDriver)
+        public Page(Driver customDriver)
         {
             this.CustomDriver = customDriver;
         }
