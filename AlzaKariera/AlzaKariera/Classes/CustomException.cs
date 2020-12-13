@@ -3,6 +3,9 @@ using System.IO;
 
 namespace AlzaKariera.Classes
 {
+    /// <summary>
+    /// Třída slouží k zalogování chyby/vytvoření screenshotu
+    /// </summary>
     class CustomException : Exception
     {
         public CustomException(Driver driver, string message) : base(message)

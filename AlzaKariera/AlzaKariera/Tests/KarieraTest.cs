@@ -6,9 +6,13 @@ namespace AlzaKariera.Tests
 {
     class KarieraTest : TestClass
     {
-
+        /// <summary>
+        /// Test ověřuje u všech nabídek oddělení IT Development, že jsou správně vyplněné (vyplněný popis pozice, fotografie lidí,
+        /// které potkáme na pohovoru a jejich krátký popisek) a zjisťuje, zda lidé, které v průběhu výběrového řízení potkáme,
+        /// jsou shodní (fotka / popisek) pro všechny inzeráty na daného oddělení
+        /// </summary>
         [Test]
-        public void Test1()
+        public void TestITDevelopment()
         {
             InitDriver(this);
             HomePage homePage = new HomePage(Driver);
@@ -27,8 +31,13 @@ namespace AlzaKariera.Tests
             }
         }
 
+        /// <summary>
+        /// Test ověřuje u všech nabídek oddělení QA, že jsou správně vyplněné (vyplněný popis pozice, fotografie lidí,
+        /// které potkáme na pohovoru a jejich krátký popisek) a zjisťuje, zda lidé, které v průběhu výběrového řízení potkáme,
+        /// jsou shodní (fotka / popisek) pro všechny inzeráty na daného oddělení
+        /// </summary>
         [Test]
-        public void Test2()
+        public void TestQA()
         {
             InitDriver(this);
             HomePage homePage = new HomePage(Driver);
