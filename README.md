@@ -14,3 +14,4 @@
 - exportovaná dokumentace je uložena v 'bin' složce projektu
 - logy z běhu testů jsou uloženy v adresáři '.\logs' v 'bin' složce projektu
 - testy jsou vytvořeny dva, jeden pro oddělení IT Development a jeden pro QC (aby bylo vidět, že dokáže pracovat se seznamem), není implementováno přecházení na další stránku 'Další' v případě, že je toto tlačítko aktivní
+- není vytvořen test na kontrolu všech linků na stránkách
