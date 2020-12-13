@@ -12,9 +12,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace AlzaKariera.Classes
 {
-    /// <summary>
-    /// Třída slouží k vytvoření instance webdriveru, nastavení logování, načtení properties během inicializace testu
-    /// </summary>
+    /// <summary>Třída slouží k vytvoření instance webdriveru, nastavení logování, načtení properties během inicializace testu</summary>
     public class Driver
     {
         IWebDriver WebDriver;
@@ -24,61 +22,53 @@ namespace AlzaKariera.Classes
         string LogDir;
         int PageOrder;
 
-        /// <summary>
-        /// Inicializace Driveru
-        /// </summary>
+        /// <summary>Defaultni konstruktor pro <see cref="Driver"/></summary>
         /// <param name="testClass">Testovací třída, která Driver inicializuje</param>
         public Driver(TestClass testClass)
         {
-            var propertiesFile = Environment.GetEnvironmentVariable("PropertiesFile");
             TestClass = testClass;
+        }
+
+        /// <summary>Inicializace Driveru</summary>
+        public void InitializeDriver()
+        {
+            var propertiesFile = Environment.GetEnvironmentVariable("PropertiesFile");
             LoadProperties(propertiesFile);
             InitLogging();
             InitWebDriver();
         }
-
-        /// <summary>
-        /// Vrací instanci objektu typu <see cref="Logger"/> určeného pro logování
-        /// </summary>
+        /// <summary>Vrací instanci objektu typu <see cref="Logger"/> určeného pro logování</summary>
         /// <returns><see cref="Logger"/></returns>
         public Logger GetLogger()
         {
             return Logger;
         }
 
-        /// <summary>
-        /// Vrací složku, do které se ukládají logy testu
-        /// </summary>
+        /// <summary>Vrací složku, do které se ukládají logy testu</summary>
         /// <returns>Název složky</returns>
         public string GetLogDir()
         {
             return LogDir;
         }
 
-        /// <summary>
-        /// Načítá properties uložené v yaml souboru
-        /// </summary>
-        /// <param name="propertiesFile">Plná cesta souboru</param>
+        /// <summary>Načítá properties uložené v yaml souboru</summary>
+        /// <param name="propertiesFile">Úplná cesta souboru</param>
         private void LoadProperties(string propertiesFile)
         {
-            Logger.Info("Načítám properties z souboru '" + propertiesFile + "'");
+            propertiesFile = (propertiesFile == null || propertiesFile.Equals("")) ? "Config/properties.yaml" : propertiesFile;
             var deserializer = new DeserializerBuilder().WithNamingConvention(UnderscoredNamingConvention.Instance)
                                                         .Build();
             Properties = deserializer.Deserialize<Properties>(File.ReadAllText(propertiesFile));
         }
 
-        /// <summary>
-        /// Vrací instanci objektu webdriveru
-        /// </summary>
+        /// <summary>Vrací instanci objektu webdriveru</summary>
         /// <returns><see cref="IWebDriver"/></returns>
         public IWebDriver GetWebDriver()
         {
             return WebDriver;
         }
 
-        /// <summary>
-        /// Medota nastavuje základní parametry logovaní, logovací složku a inicializuje <see cref="Logger"/>
-        /// </summary>
+        /// <summary>Medota nastavuje základní parametry logovaní, logovací složku a inicializuje <see cref="Logger"/></summary>
         private void InitLogging()
         {
             if (Logger == null)
@@ -89,17 +79,18 @@ namespace AlzaKariera.Classes
                 LogManager.Configuration.Variables["basedir"] = Properties.Logs.Folder;
                 LogManager.Configuration.Variables["testfolder"] = testFolder;
                 Logger = LogManager.GetCurrentClassLogger();
-                Logger.Info("Inicializuji logger");
+                Logger.Debug("Inicializace loggeru dokončena");
             }
         }
 
-        /// <summary>
-        /// Medota inicializuje <see cref="IWebDriver"/> a nastavuje event handlery pro akce v <see cref="IWebDriver"/>
-        /// </summary>
+        /// <summary>Medota inicializuje <see cref="IWebDriver"/> a nastavuje event handlery pro akce v <see cref="IWebDriver"/></summary>
         private void InitWebDriver()
         {
             Logger.Info("Inicializuji WebDriver");
             string app = Environment.GetEnvironmentVariable("TestApplication");
+            if (app == null || !Properties.Apps.ContainsKey(app))
+                throw new CustomException(this, "Hodnota aplikace není nastavena, ukončuji testy");
+
             WebDriver = InitializeWebDriver();
             WebDriver.Navigate().GoToUrl(Properties.Apps[app].Url);
             WebDriver.Manage().Window.Maximize();
@@ -122,56 +113,53 @@ namespace AlzaKariera.Classes
         {
             ((IJavaScriptExecutor)args.Driver).ExecuteScript("arguments[0].style.outline='4px solid red'", args.Element);
             string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
-            Logger.Info("Ukládám screenshot do souboru '" + screenShotFile + "'");
             Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
+            Logger.Debug("Screenshot uložen do souboru '{0}'", screenShotFile);
         }
 
-        /// <summary>
-        /// Metoda určena k exekuci akcí po události <see cref="EventFiringWebDriver.NavigatingForward"/>
-        /// </summary>
+        /// <summary>Metoda určena k exekuci akcí po události <see cref="EventFiringWebDriver.NavigatingForward"/></summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         private void EventFiringWebDriver_createScreenShot_forward(object sender, WebDriverNavigationEventArgs args)
         {
             string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
-            Logger.Info("Ukládám screenshot do souboru '" + screenShotFile + "'");
             Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
+            Logger.Debug("Screenshot uložen do souboru '{0}'", screenShotFile);
         }
 
-        /// <summary>
-        /// Metoda určena k exekuci akcí po události <see cref="EventFiringWebDriver.NavigatingBack"/>
-        /// </summary>
+        /// <summary>Metoda určena k exekuci akcí po události <see cref="EventFiringWebDriver.NavigatingBack"/></summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         private void EventFiringWebDriver_createScreenShot_back(object sender, WebDriverNavigationEventArgs args)
         {
             string screenShotFile = GetLogDir() + "/screenshot_" + (++PageOrder).ToString().PadLeft(2, '0') + ".png";
-            Logger.Info("Ukládám screenshot do souboru '" + screenShotFile + "'");
             Utils.SaveScreenshotAsFile(GetWebDriver(), screenShotFile);
+            Logger.Debug("Screenshot uložen do souboru '{0}'", screenShotFile);
         }
 
-        /// <summary>
-        /// Ruší instanci driveru
-        /// </summary>
+        /// <summary>Ruší instanci webdriveru</summary>
         public void Quit()
         {
-            Logger.Info("Ukončuji WebDriver");
-            WebDriver.Quit();
+            if (WebDriver != null)
+            {
+                Logger.Info("Ukončuji WebDriver");
+                WebDriver.Quit();
+            }
         }
 
-        /// <summary>
-        /// Medota inicializuje <see cref="IWebDriver"/>
-        /// </summary>
+        /// <summary>Medota inicializuje <see cref="IWebDriver"/></summary>
         /// <returns><see cref="IWebDriver"/></returns>
         private IWebDriver InitializeWebDriver()
         {
             string browser = Environment.GetEnvironmentVariable("TestBrowser");
+            browser = browser == null ? "" : browser;
+
             Uri uri = new Uri(Properties.Grid.Url);
             bool isRemote = false;
             try
             {
                 isRemote = Boolean.Parse(Environment.GetEnvironmentVariable("TestIsRemote"));
-                Logger.Info("Nastavuji hodnotu isRemote na '" + isRemote + "'");
+                Logger.Info("Nastavuji hodnotu isRemote na '{0}'", isRemote);
             }
             catch (Exception)
             {
@@ -180,7 +168,7 @@ namespace AlzaKariera.Classes
 
             if (isRemote)
             {
-                Logger.Info("Pouštím remote driver na url '" + uri + "'");
+                Logger.Debug("Pouštím remote driver na url '{0}'", uri);
                 if (browser.Equals("chrome"))
                     return new RemoteWebDriver(uri, new ChromeOptions());
                 else if (browser.Equals("firefox"))
@@ -190,7 +178,7 @@ namespace AlzaKariera.Classes
             }
             else
             {
-                Logger.Info("Pouštím local driver");
+                Logger.Debug("Pouštím local driver");
                 if (browser.Equals("chrome"))
                     return new OpenQA.Selenium.Chrome.ChromeDriver();
                 else if (browser.Equals("firefox"))

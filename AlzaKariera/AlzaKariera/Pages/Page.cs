@@ -7,14 +7,12 @@ using System.Collections.Generic;
 namespace AlzaKariera
 {
     /// <summary>Předpis pro všechny stránky</summary>
-    public abstract class Page
+    public class Page
     {
         /// <summary><see cref="Driver"/></summary>
         protected Driver Driver;
 
-        /// <summary>
-        /// Constructor pro <see cref="Page"/>
-        /// </summary>
+        /// <summary>Constructor pro <see cref="Page"/></summary>
         /// <param name="driver"><see cref="Driver"/></param>
         public Page(Driver driver)
         {
@@ -40,9 +38,7 @@ namespace AlzaKariera
         //    return webElement;
         //}
 
-        /// <summary>
-        /// Hledá element dle <paramref name="by"/>
-        /// </summary>
+        /// <summary>Hledá element dle <paramref name="by"/></summary>
         /// <param name="by">Podle čeho se bude hledat <see cref="By"/></param>
         /// <returns>Hledaný element <see cref="IWebElement"/></returns>
         public IWebElement GetElement(By by)
@@ -50,9 +46,7 @@ namespace AlzaKariera
             return getElements(by, null, null)[0];
         }
 
-        /// <summary>
-        /// Hledá element dle <paramref name="by"/> a parenta <paramref name="parentWebElement"/>
-        /// </summary>
+        /// <summary>Hledá element dle <paramref name="by"/> a parenta <paramref name="parentWebElement"/></summary>
         /// <param name="by">Podle čeho se bude hledat <see cref="By"/></param>
         /// <param name="parentWebElement">Parent element <see cref="IWebElement"/></param>
         /// <returns>Hledaný element <see cref="IWebElement"/></returns>
@@ -131,19 +125,15 @@ namespace AlzaKariera
                 throw new CustomException(Driver, "Nepodařilo se nalézt element '" + by + "'");
         }
 
-        /// <summary>
-        /// Volá metodu <see cref="IWebElement.Click()"/> na elementu
-        /// </summary>
+        /// <summary>Volá metodu <see cref="IWebElement.Click()"/> na elementu</summary>
         /// <param name="element"><see cref="IWebElement"/></param>
         public void ClickOn(IWebElement element)
         {
-            Driver.GetLogger().Info("Klikám na element '" + element.Text + "'");
+            Driver.GetLogger().Info("Klikám na element '{0}'", element.Text);
             element.Click();
         }
 
-        /// <summary>
-        /// Zjišťuje, zda je stránka načtená. Použito v konstruktoru <see cref="Page"/>
-        /// </summary>
+        /// <summary>Zjišťuje, zda je stránka načtená. Použito v konstruktoru <see cref="Page"/></summary>
         /// <returns><c>true</c> stránka je ve stavu <c>complete</c>, <c>false</c> v opačném případě</returns>
         public bool PageIsLoaded()
         {

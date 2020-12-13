@@ -1,7 +1,7 @@
 @echo off
 setlocal
 set PropertiesFile=Config/properties.yaml
-set ProjectFile=AlzaKariera\AlzaKariera.csproj
+set ProjectFile=AlzaKariera/AlzaKariera.csproj
 rem set ProjectFile=%1
 set TestApplication=kariera
 rem set TestApplication=%2

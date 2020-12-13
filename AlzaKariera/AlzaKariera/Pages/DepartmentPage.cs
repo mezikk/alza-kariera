@@ -4,31 +4,25 @@ using System.Collections.Generic;
 
 namespace AlzaKariera
 {
-    /// <summary>
-    /// Webová stránka se seznamem nabídek zaměstnání daného oddělení
-    /// </summary>
+    /// <summary>Webová stránka se seznamem nabídek zaměstnání daného oddělení</summary>
     public class DepartmentPage : Page
     {
         readonly By JobOfferContainer = By.XPath("//job-offer-list//*[@class='container']");
         IWebElement JobOffers;
 
-        /// <summary>
-        /// Constructor pro <see cref="DepartmentPage"/>
-        /// </summary>
+        /// <summary>Constructor pro <see cref="DepartmentPage"/></summary>
         /// <param name="driver"><see cref="Driver"/></param>
         public DepartmentPage(Driver driver) : base(driver)
         {
             JobOffers = GetElement(JobOfferContainer);
         }
 
-        /// <summary>
-        /// Metoda vrací seznam nabídek zaměstnání pouze z načtené stránky. Další nabídky (tlačítko Další) nejsou implementovány
-        /// </summary>
+        /// <summary>Metoda vrací seznam nabídek zaměstnání pouze z načtené stránky. Další nabídky (tlačítko Další) nejsou implementovány</summary>
         /// <param name="department">Název oddělení</param>
         /// <returns>Mapa se seznamem nabídek</returns>
         public Dictionary<string, Offer> GetJobOffers(string department)
         {
-            Driver.GetLogger().Info("Získávám seznam nabídek oddělení '" + department + "'");
+            Driver.GetLogger().Info("Získávám seznam nabídek oddělení '{0}'", department);
 
             By jobOffersTitle = By.XPath("//career-position-detail-page//job-detail-header//h1[contains(text(), '" + department + "')]");
             GetElement(jobOffersTitle);
@@ -44,16 +38,14 @@ namespace AlzaKariera
                     Driver.GetLogger().Warn("Duplicitní link {0} u nabídky {1} a {2}", pathname, jobTitle, offers[pathname].JobTitle);
                 else
                 {
-                    Driver.GetLogger().Info("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
+                    Driver.GetLogger().Debug("Pathname linku: {0} a job-title: {1}", pathname, jobTitle);
                     offers.Add(pathname, new Offer(pathname, jobTitle));
                 }
             }
             return offers;
         }
 
-        /// <summary>
-        /// Otevírá stránku s detailem konkrétní nabídky zaměstnání
-        /// </summary>
+        /// <summary>Otevírá stránku s detailem konkrétní nabídky zaměstnání</summary>
         /// <param name="offer">Konkrétní nabídka ze seznamu nabídek</param>
         /// <param name="department">Název oddělení</param>
         /// <returns></returns>

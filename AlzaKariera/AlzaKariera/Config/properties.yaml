@@ -1,10 +1,10 @@
 ﻿drivers:
   chrome:
-    driver: 'chrome_driver_exe'
-    bin: 'chrome_bin'
+    driver: 'chrome_driver_exe_neimplementovano_bere_se_z_path'
+    bin: 'chrome_bin_neimplementovano_bere_se_z_path'
   firefox:
-    driver: 'gecko_driver_exe'
-    bin: 'firefox_bin'
+    driver: 'gecko_driver_exe_neimplementovano_bere_se_z_path'
+    bin: 'firefox_bin_neimplementovano_bere_se_z_path'
 grid:
   url: 'http://localhost:4444/wd/hub'
 logs:

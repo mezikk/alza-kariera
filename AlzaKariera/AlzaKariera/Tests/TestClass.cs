@@ -9,22 +9,19 @@ namespace AlzaKariera.Tests
         /// <summary><see cref="Driver"/></summary>
         public Driver Driver;
 
-        /// <summary>
-        /// Inicializuje <see cref="Driver"/> na začátku testu>
-        /// </summary>
+        /// <summary>Inicializace <see cref="Driver"/> na začátku testu</summary>
         /// <param name="testClass">Objekt typu <see cref="TestClass"/>, který test spouští</param>
         public void InitDriver(TestClass testClass)
         {
             Driver = new Driver(testClass);
+            Driver.InitializeDriver();
         }
-        
-        /// <summary>
-        /// Ukončení instance <see cref="Driver"/> na konci testu
-        /// </summary>
+
+        /// <summary>Zrušení <see cref="Driver"/> na konci testu</summary>
         [TearDown]
         public void TearDown()
         {
-            Driver.GetWebDriver().Quit();
+            Driver.Quit();
         }
     }
 }

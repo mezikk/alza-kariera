@@ -1,8 +1,6 @@
 ﻿namespace AlzaKariera
 {
-    /// <summary>
-    /// Předpis pro vytvoření osoby, která se účastní některé fáze pohovoru
-    /// </summary>
+    /// <summary>Předpis pro vytvoření osoby, která se účastní některé fáze pohovoru</summary>
     public class Person
     {
         /// <summary>Jméno a příjmení účastníka řízení</summary>

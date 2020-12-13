@@ -1,8 +1,6 @@
 ﻿namespace AlzaKariera.Classes
 {
-    /// <summary>
-    /// Předpis pro vytvoření nabídky zaměstnání
-    /// </summary>
+    /// <summary>Předpis pro vytvoření nabídky zaměstnání</summary>
     public class Offer
     {
         /// <summary>Odkaz na nabídku</summary>

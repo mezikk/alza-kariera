@@ -7,7 +7,7 @@ namespace AlzaKariera.Classes
     {
         /// <summary><see cref="Drivers"/></summary>
         public Drivers Drivers = new Drivers();
-        
+
         /// <summary><see cref="Grid"/></summary>
         public Grid Grid = new Grid();
 
@@ -28,7 +28,7 @@ namespace AlzaKariera.Classes
         public FirefoxDriver Firefox = new FirefoxDriver();
     }
 
-    /// <summary>Údaje k driveru</summary>
+    /// <summary>Údaje k driveru (chrome)</summary>
     public class ChromeDriver
     {
         /// <summary>Cesta k driveru (driver)</summary>
@@ -38,7 +38,7 @@ namespace AlzaKariera.Classes
         public string Bin { get; set; }
     }
 
-    /// <summary>Údaje k driveru</summary>
+    /// <summary>Údaje k driveru (firefox)</summary>
     public class FirefoxDriver
     {
         /// <summary>Cesta k driveru (driver)</summary>
@@ -51,24 +51,24 @@ namespace AlzaKariera.Classes
     /// <summary>Údaje o selenium gridu (grid)</summary>
     public class Grid
     {
-        /// <summary>Url selenium hubu</summary>
+        /// <summary>Url selenium hubu (url)</summary>
         public string Url { get; set; }
     }
 
     /// <summary>Údaje k logování (logs)</summary>
     public class Logs
     {
-        /// <summary>Umístění config souboru pro logování</summary>
+        /// <summary>Umístění config souboru pro logování (config)</summary>
         public string Config { get; set; }
 
-        /// <summary>Root složka, kam se budou ukládat logy</summary>
+        /// <summary>Root složka, kam se budou ukládat logy (folder)</summary>
         public string Folder { get; set; }
     }
 
-    /// <summary>Údaje o testované aplikaci</summary>
+    /// <summary>Údaje o testované aplikaci (nazev_aplikace)</summary>
     public class App
     {
-        /// <summary>Url testované aplikace</summary>
+        /// <summary>Url testované aplikace (url)</summary>
         public string Url { get; set; }
     }
 
